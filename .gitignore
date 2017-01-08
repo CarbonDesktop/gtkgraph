@@ -16,3 +16,30 @@ Makefile.in
 /install-sh
 /missing
 /stamp-h1
+
+config.status
+*.log
+config.h*
+stamp-*
+Makefile
+
+.deps/
+.dirstamp
+
+*.trs
+test-driver
+
+# C files
+*.o
+
+# Project
+docs/
+
+ar-lib
+config.guess
+config.sub
+libtool
+ltmain.sh
+*.lo
+.libs
+*.la
