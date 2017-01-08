@@ -24,6 +24,7 @@ AC_CONFIG_HEADERS([lib/config.h])
 AC_CONFIG_FILES([
   Makefile
   lib/Makefile
+  example/Makefile
   ])
 
 

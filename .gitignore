@@ -43,3 +43,5 @@ ltmain.sh
 *.lo
 .libs
 *.la
+
+example/gauge
