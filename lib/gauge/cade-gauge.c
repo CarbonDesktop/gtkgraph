@@ -14,20 +14,20 @@ G_DEFINE_TYPE (CadeGauge, cade_gauge, GTK_TYPE_WIDGET)
 
 static GtkSizeRequestMode cade_gauge_get_request_mode(GtkWidget *w)
 {
-  return GTK_SIZE_REQUEST_HEIGHT_FOR_WIDTH;
+  return GTK_SIZE_REQUEST_CONSTANT_SIZE;
 }
 
 /* Size Functions */
 
 static void cade_gauge_get_preferred_height(GtkWidget *w, gint *min, gint *natural)
 {
-  *min = 50;
+  *min = 75;
   *natural = 100;
 }
 
 static void cade_gauge_get_preferred_width(GtkWidget *w, gint *min, gint *natural)
 {
-  *min = 100;
+  *min = 150;
   *natural = 200;
 }
 
@@ -97,9 +97,11 @@ static gboolean cade_gauge_draw(GtkWidget *w, cairo_t *cr)
   gtk_widget_get_allocation(w, &alloc);
   cairo_set_line_width(cr, 50);
 
-  g_warning("X: %d, Y: %d, WIDTH: %d, HEIGHT: %d", alloc.x, alloc.y, alloc.width, alloc.height);
-
   int radius = alloc.height - 25;
+  if(alloc.width / 2 < alloc.height)
+  {
+    radius = alloc.width / 2 - 25;
+  }
 
   cairo_arc(cr,alloc.width/2, alloc.height, radius, 3.141, (gauge->value+1) * 3.141);
   cairo_stroke_preserve(cr);

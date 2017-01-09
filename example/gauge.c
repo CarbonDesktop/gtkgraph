@@ -19,16 +19,24 @@ int main(int argc, char **argv)
   gtk_init(&argc, &argv);
 
   GtkWidget *w = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-  GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
+  CadeGauge *mem = cade_gauge_new();
+  CadeGauge *cpu = cade_gauge_new();
 
-  CadeGauge *gauge = cade_gauge_new();
+  GtkWidget *grid = gtk_grid_new();
 
-  gtk_box_pack_end(GTK_BOX(box), GTK_WIDGET(gauge), TRUE, TRUE, 0);
+  GtkGrid *g = GTK_GRID(grid);
+  gtk_grid_set_column_spacing(g, 10);
 
-  gtk_container_add(GTK_CONTAINER(w), GTK_WIDGET(box));
+  gtk_grid_attach(g, gtk_label_new("Processor"), 0, 0, 1, 1);
+  gtk_grid_attach(g, gtk_label_new("Memory"), 1, 0, 1, 1);
+  gtk_grid_attach(g, GTK_WIDGET(cpu), 0, 1, 1, 1);
+  gtk_grid_attach(g, GTK_WIDGET(mem), 1, 1, 1, 1);
 
-  g_timeout_add(10, timeout, gauge);
 
+  g_timeout_add(10, timeout, mem);
+  g_timeout_add(7, timeout, cpu);
+  gtk_container_add(GTK_CONTAINER(w), grid);
+  g_signal_connect_swapped(w, "destroy", G_CALLBACK(gtk_main_quit), NULL);
   gtk_widget_show_all(w);
 
   gtk_main();
