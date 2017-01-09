@@ -102,6 +102,8 @@ static gboolean cade_gauge_draw(GtkWidget *w, cairo_t *cr)
 
   CadeGauge *gauge = CADE_GAUGE(w);
 
+  cairo_set_source_rgb(cr, 0, 0.5, 1);
+
   cairo_set_line_width(cr, 50);
 
   int radius = alloc.height - 25;
@@ -111,6 +113,21 @@ static gboolean cade_gauge_draw(GtkWidget *w, cairo_t *cr)
   }
 
   cairo_arc(cr,alloc.width/2, alloc.height, radius, 3.141, (gauge->value+1) * 3.141);
+  cairo_stroke(cr);
+
+  cairo_set_line_width(cr, 2);
+
+  cairo_arc(cr,alloc.width/2, alloc.height, radius-24, 3.141, 2 * 3.141);
+  cairo_stroke(cr);
+  cairo_arc(cr,alloc.width/2, alloc.height, radius+24, 3.141, 2 * 3.141);
+  cairo_stroke(cr);
+
+  cairo_move_to(cr, 0, alloc.height -1);
+  cairo_line_to(cr, 50, alloc.height -1);
+  cairo_stroke(cr);
+
+  cairo_move_to(cr, alloc.width - 50, alloc.height -1);
+  cairo_line_to(cr, alloc.width, alloc.height -1);
   cairo_stroke(cr);
 
   gchar *text = g_strdup_printf("%d %%", (int) (gauge->value * 100) );

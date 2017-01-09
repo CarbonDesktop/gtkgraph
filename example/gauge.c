@@ -14,6 +14,11 @@ gboolean timeout(gpointer data)
   return G_SOURCE_CONTINUE;
 }
 
+gboolean value_changed(GtkRange *r, GtkScrollType scroll, gdouble value, CadeGauge *gauge)
+{
+  cade_gauge_set_value(gauge, value);
+}
+
 int main(int argc, char **argv)
 {
   gtk_init(&argc, &argv);
@@ -21,6 +26,7 @@ int main(int argc, char **argv)
   GtkWidget *w = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   CadeGauge *mem = cade_gauge_new();
   CadeGauge *cpu = cade_gauge_new();
+  CadeGauge *custom = cade_gauge_new();
 
   GtkWidget *grid = gtk_grid_new();
 
@@ -29,8 +35,16 @@ int main(int argc, char **argv)
 
   gtk_grid_attach(g, gtk_label_new("Processor"), 0, 0, 1, 1);
   gtk_grid_attach(g, gtk_label_new("Memory"), 1, 0, 1, 1);
+  gtk_grid_attach(g, gtk_label_new("Custom"), 2, 0, 1, 1);
   gtk_grid_attach(g, GTK_WIDGET(cpu), 0, 1, 1, 1);
   gtk_grid_attach(g, GTK_WIDGET(mem), 1, 1, 1, 1);
+  gtk_grid_attach(g, GTK_WIDGET(custom), 2, 1, 1, 1);
+
+  gtk_grid_attach(g, gtk_label_new("Change Value:"), 0, 2, 3, 1);
+
+  GtkWidget *scale = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 0, 1, 0.001);
+  gtk_grid_attach(g, GTK_WIDGET(scale), 0, 3, 3, 1);
+  g_signal_connect(scale, "change-value", G_CALLBACK(value_changed), custom);
 
 
   g_timeout_add(10, timeout, mem);
