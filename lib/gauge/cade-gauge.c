@@ -3,6 +3,7 @@
 
 struct _CadeGauge {
   GtkWidget parent_instance;
+  float value;
 };
 
 struct _CadeGaugeClass {
@@ -49,7 +50,9 @@ static void cade_gauge_allocate_size(GtkWidget *w, GtkAllocation *alloc)
   gtk_widget_set_allocation(w, alloc);
   if(gtk_widget_get_has_window(w))
   {
-    gdk_window_move_resize(gtk_widget_get_window(w), alloc->x, alloc->y, alloc->width, alloc->height);
+    GdkWindow *window = gtk_widget_get_window(w);
+    if(window)
+      gdk_window_move_resize(window, alloc->x, alloc->y, alloc->width, alloc->height);
   }
 }
 
@@ -89,10 +92,17 @@ static void cade_gauge_realize(GtkWidget *w)
 
 static gboolean cade_gauge_draw(GtkWidget *w, cairo_t *cr)
 {
-  cairo_move_to(cr, 0, 0);
-  cairo_line_to(cr, 500, 500);
-  cairo_show_text(cr, "Hello World!");
-  cairo_stroke(cr);
+  CadeGauge *gauge = CADE_GAUGE(w);
+  GtkAllocation alloc;
+  gtk_widget_get_allocation(w, &alloc);
+  cairo_set_line_width(cr, 50);
+
+  g_warning("X: %d, Y: %d, WIDTH: %d, HEIGHT: %d", alloc.x, alloc.y, alloc.width, alloc.height);
+
+  int radius = alloc.height - 25;
+
+  cairo_arc(cr,alloc.width/2, alloc.height, radius, 3.141, (gauge->value+1) * 3.141);
+  cairo_stroke_preserve(cr);
   return TRUE;
 }
 
@@ -113,10 +123,25 @@ cade_gauge_class_init (CadeGaugeClass *klass)
 static void
 cade_gauge_init (CadeGauge *self)
 {
+  self->value = 0;
 }
 
 CadeGauge *
 cade_gauge_new (void)
 {
   return g_object_new (CADE_TYPE_GAUGE, NULL);
+}
+
+float cade_gauge_get_value(CadeGauge *gauge)
+{
+  if(gauge)
+    return gauge->value;
+
+  return 0;
+}
+
+void cade_gauge_set_value(CadeGauge *gauge, float value)
+{
+  gauge->value = value;
+  gtk_widget_queue_draw(GTK_WIDGET(gauge));
 }

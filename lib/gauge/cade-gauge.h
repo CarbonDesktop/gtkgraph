@@ -18,6 +18,8 @@ typedef struct _CadeGaugeClass   CadeGaugeClass;
 
 GType      cade_gauge_get_type (void) G_GNUC_CONST;
 CadeGauge *cade_gauge_new (void);
+float      cade_gauge_get_value(CadeGauge *gauge);
+void       cade_gauge_set_value(CadeGauge *gauge, float value);
 
 G_END_DECLS
 
