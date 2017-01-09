@@ -22,13 +22,13 @@ static GtkSizeRequestMode cade_gauge_get_request_mode(GtkWidget *w)
 static void cade_gauge_get_preferred_height(GtkWidget *w, gint *min, gint *natural)
 {
   *min = 75;
-  *natural = 100;
+  *natural = 75;
 }
 
 static void cade_gauge_get_preferred_width(GtkWidget *w, gint *min, gint *natural)
 {
   *min = 150;
-  *natural = 200;
+  *natural = 150;
 }
 
 static void cade_gauge_get_preferred_width_for_height(GtkWidget *w, gint height, gint *min, gint *natural)
@@ -92,9 +92,16 @@ static void cade_gauge_realize(GtkWidget *w)
 
 static gboolean cade_gauge_draw(GtkWidget *w, cairo_t *cr)
 {
-  CadeGauge *gauge = CADE_GAUGE(w);
   GtkAllocation alloc;
   gtk_widget_get_allocation(w, &alloc);
+
+
+  GtkStyleContext *style = gtk_widget_get_style_context(w);
+
+  gtk_render_background(style, cr, 0, 0, alloc.width, alloc.height);
+
+  CadeGauge *gauge = CADE_GAUGE(w);
+
   cairo_set_line_width(cr, 50);
 
   int radius = alloc.height - 25;
@@ -104,7 +111,19 @@ static gboolean cade_gauge_draw(GtkWidget *w, cairo_t *cr)
   }
 
   cairo_arc(cr,alloc.width/2, alloc.height, radius, 3.141, (gauge->value+1) * 3.141);
-  cairo_stroke_preserve(cr);
+  cairo_stroke(cr);
+
+  gchar *text = g_strdup_printf("%d %%", (int) (gauge->value * 100) );
+
+  cairo_text_extents_t extents;
+  cairo_text_extents(cr, text, &extents);
+  double x = (alloc.width / 2) - (extents.width/2) + extents.x_bearing;
+  double y = alloc.height - extents.height - extents.y_bearing;
+
+  cairo_move_to(cr,x,y);
+  cairo_show_text(cr, text);
+
+  g_free(text);
   return TRUE;
 }
 
